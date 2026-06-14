@@ -4,6 +4,7 @@ import org.dflib.ByteSource;
 import org.dflib.DataFrame;
 import org.dflib.builder.DataFrameAppender;
 import org.dflib.codec.Codec;
+import org.dflib.csv.exceptions.CsvReadException;
 import org.dflib.csv.parser.format.CsvColumnMapping;
 import org.dflib.csv.parser.format.CsvParserConfig;
 import org.dflib.csv.parser.context.DataSlice;
@@ -76,7 +77,10 @@ public class CsvParser {
         try (Reader in = createReader(plainSrc)) {
             return parse(in);
         } catch (IOException e) {
-            throw new RuntimeException("Error reading source: " + plainSrc.uri().orElse("?"), e);
+            throw new CsvReadException(
+                    "Error reading source: " + plainSrc.uri().orElse("?"),
+                    e
+            );
         }
     }
 
