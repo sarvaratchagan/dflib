@@ -1,5 +1,7 @@
 package org.dflib.csv.parser;
 
+import org.dflib.csv.exceptions.CsvBufferOverflowException;
+import org.dflib.csv.exceptions.CsvParseException;
 import org.dflib.csv.parser.context.DataSlice;
 import org.dflib.csv.parser.context.ParserContext;
 import org.dflib.csv.parser.rules.ParserRule;
@@ -71,7 +73,10 @@ final class CsvScanner {
                 endOfBuffer();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CsvParseException(
+                    "Unexpected error while scanning CSV",
+                    e
+            );
         }
 
         if (!context.stopRequested()) {
@@ -113,7 +118,11 @@ final class CsvScanner {
         if (earliest == 0) {
             int newSize = readBuffer.capacity() * 2;
             if (newSize > MAX_BUFFER_SIZE) {
-                throw new RuntimeException("Char buffer is too small to read a single value");
+                throw new CsvBufferOverflowException(
+                        "CSV field exceeds maximum supported size of "
+                                + MAX_BUFFER_SIZE
+                                + " characters"
+                );
             }
 
             CharBuffer newBuffer = CharBuffer.allocate(newSize);

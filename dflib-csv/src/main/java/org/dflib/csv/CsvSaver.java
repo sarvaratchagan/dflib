@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.dflib.DataFrame;
 import org.dflib.Index;
 import org.dflib.codec.Codec;
+import org.dflib.csv.exceptions.CsvWriteException;
 import org.dflib.row.RowProxy;
 
 import java.io.File;
@@ -86,7 +87,10 @@ public class CsvSaver {
         try (Writer out = new OutputStreamWriter(compressIfNeeded(new FileOutputStream(file), file.getName()))) {
             doSave(df, out);
         } catch (IOException e) {
-            throw new RuntimeException("Error writing CSV to " + file + ": " + e.getMessage(), e);
+            throw new CsvWriteException(
+                    "Error writing CSV to " + file,
+                    e
+            );
         }
     }
 
@@ -107,7 +111,10 @@ public class CsvSaver {
         try (Writer writer = new OutputStreamWriter(compressIfNeeded(out, null))) {
             doSave(df, writer);
         } catch (IOException e) {
-            throw new RuntimeException("Error writing CSV: " + e.getMessage(), e);
+            throw new CsvWriteException(
+                    "Error writing CSV",
+                    e
+            );
         }
     }
 
@@ -120,7 +127,10 @@ public class CsvSaver {
             // producing a char stream, so no compression by definition
             doSave(df, out);
         } catch (IOException e) {
-            throw new RuntimeException("Error writing CSV: " + e.getMessage(), e);
+            throw new CsvWriteException(
+                    "Error writing CSV",
+                    e
+            );
         }
     }
 
